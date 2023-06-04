@@ -6,8 +6,8 @@ type ErrorResponse struct {
 	Errors any `json:"errors,omitempty"`
 }
 
-func DefaultErrorResponse() ErrorResponse {
-	return DefaultErrorResponseWithMessage("")
+func DefaultErrorResponse(errMessage string) ErrorResponse {
+	return DefaultErrorResponseWithMessage(errMessage)
 }
 
 func DefaultErrorResponseWithMessage(msg string) ErrorResponse {
