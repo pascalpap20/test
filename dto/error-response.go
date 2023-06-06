@@ -47,3 +47,15 @@ func DefaultDataInvalidResponse(validationErrors any) ErrorResponse {
 func DefaultBadRequestResponse() ErrorResponse {
 	return DefaultErrorResponseWithMessage("Bad request")
 }
+
+func DefaultUnauthorizedResponse() ErrorResponse {
+	return ErrorResponse{
+		ResponseMeta: ResponseMeta{
+			Success:      false,
+			MessageTitle: "unauthorized",
+			Message:      "this user is unauthorized",
+			ResponseTime: "",
+		},
+		Data: nil,
+	}
+}

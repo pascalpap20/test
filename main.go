@@ -2,6 +2,7 @@ package main
 
 import (
 	"crud/modules/account"
+	"crud/modules/customer"
 	"crud/modules/user"
 	"crud/utils/db"
 	"fmt"
@@ -34,6 +35,9 @@ func main() {
 
 	adminHandler := account.NewRouter(dbCrud)
 	adminHandler.Handle(router)
+
+	customerHandler := customer.NewRouter(dbCrud)
+	customerHandler.Handle(router)
 
 	errRouter := router.Run(":8081")
 	if errRouter != nil {

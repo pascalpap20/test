@@ -3,6 +3,7 @@ package account
 import (
 	"crud/entity"
 	"crud/repository"
+	"crud/utils/auth"
 	"time"
 )
 
@@ -22,6 +23,9 @@ type useCaseAdmin struct {
 
 func (uc useCaseAdmin) CreateAdmin(admin AdminParam) (entity.Actor, error) {
 	var newAdmin *entity.Actor
+	var salt string
+
+	admin.Password, salt = auth.GenerateHash(admin.Password)
 
 	newAdmin = &entity.Actor{
 		Username:   admin.Username,
@@ -29,6 +33,7 @@ func (uc useCaseAdmin) CreateAdmin(admin AdminParam) (entity.Actor, error) {
 		Password:   admin.Password,
 		IsVerified: admin.IsVerified,
 		IsActive:   admin.IsActive,
+		Salt:       salt,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 	}
@@ -54,12 +59,16 @@ func (uc useCaseAdmin) GetAdmins(username string, page uint) ([]entity.Actor, er
 
 func (uc useCaseAdmin) UpdateAdminById(admin UpdateAdmin, id uint) (entity.Actor, error) {
 	var updateAdmin *entity.Actor
+	var salt string
+
+	admin.Password, salt = auth.GenerateHash(admin.Password)
 
 	updateAdmin = &entity.Actor{
 		Username:   admin.Username,
 		Password:   admin.Password,
 		IsVerified: admin.IsVerified,
 		IsActive:   admin.IsActive,
+		Salt:       salt,
 	}
 
 	_, err := uc.adminRepo.UpdateActorById(updateAdmin, id)

@@ -9,6 +9,7 @@ type Actor struct {
 	Password   string `gorm:"column:password"`
 	IsVerified string `gorm:"column:is_verified"`
 	IsActive   string `gorm:"column:is_active"`
+	Salt       string `gorm:"column:salt"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

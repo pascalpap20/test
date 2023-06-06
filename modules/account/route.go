@@ -1,6 +1,7 @@
 package account
 
 import (
+	"crud/middleware"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -29,7 +30,7 @@ func (r RouterAdmin) Handle(router *gin.Engine) {
 		r.AdminRequestHandler.GetAdminById,
 	)
 
-	admin.GET("/",
+	admin.GET("/", middleware.IsAdmin(),
 		r.AdminRequestHandler.GetAdmins,
 	)
 

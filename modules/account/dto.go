@@ -47,3 +47,18 @@ type RegisterParam struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+type SuccessLoginParam struct {
+	RoleID      uint   `json:"role_id"`
+	Username    string `json:"username"`
+	IsVerified  string `json:"is_verified"`
+	IsActive    string `json:"is_active"`
+	AccessToken string `json:"access_token"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+type SuccessLogin struct {
+	dto.ResponseMeta
+	Data SuccessLoginParam `json:"data"`
+}

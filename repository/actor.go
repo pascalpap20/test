@@ -2,6 +2,7 @@ package repository
 
 import (
 	"crud/entity"
+	"crud/utils/auth"
 	"errors"
 	"gorm.io/gorm"
 )
@@ -85,15 +86,17 @@ func (repo Actor) Login(actor *entity.Actor) (*entity.Actor, error) {
 		return actor, err
 	}
 
-	// Verify the password
-	//if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(actor.Password)); err != nil {
+	//Verify the password
+	if err := auth.VerifyLogin(admin.Password, actor, admin.Salt); err != nil {
+		err = errors.New("invalid username or password")
+		return actor, err
+	}
+
+	//Verify the password
+	//if err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(actor.Password+admin.Salt)); err != nil {
 	//	err = errors.New("invalid username or password")
 	//	return actor, err
 	//}
-	if admin.Password != actor.Password {
-		err := errors.New("invalid username or password")
-		return actor, err
-	}
 
 	return admin, nil
 }

@@ -2,6 +2,7 @@ package account
 
 import (
 	"crud/dto"
+	"crud/utils/auth"
 )
 
 type ControllerAdmin interface {
@@ -123,19 +124,21 @@ func (uc controllerAdmin) Login(req LoginParam) (any, error) {
 		return SuccessCreate{}, err
 	}
 
-	res := SuccessCreate{
+	accessToken := auth.GenerateTokenJwt(admin)
+
+	res := SuccessLogin{
 		ResponseMeta: dto.ResponseMeta{
 			Success:      true,
 			MessageTitle: "Success Login",
 			Message:      "Success Login",
 			ResponseTime: "",
 		},
-		Data: AdminParam{
-			Username:   admin.Username,
-			RoleID:     admin.RoleID,
-			Password:   admin.Password,
-			IsVerified: admin.IsVerified,
-			IsActive:   admin.IsActive,
+		Data: SuccessLoginParam{
+			Username:    admin.Username,
+			RoleID:      admin.RoleID,
+			IsVerified:  admin.IsVerified,
+			IsActive:    admin.IsActive,
+			AccessToken: accessToken,
 		},
 	}
 	return res, nil
