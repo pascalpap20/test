@@ -48,12 +48,12 @@ func (h RequestHandlerCustomer) CreateCustomer(c *gin.Context) {
 }
 
 func (h RequestHandlerCustomer) GetCustomerById(c *gin.Context) {
-	request := CustomerParam{}
-	err := c.BindQuery(&request)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
-		return
-	}
+	//request := CustomerParam{}
+	//err := c.BindQuery(&request)
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+	//	return
+	//}
 
 	customerId, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
@@ -70,12 +70,12 @@ func (h RequestHandlerCustomer) GetCustomerById(c *gin.Context) {
 }
 
 func (h RequestHandlerCustomer) GetCustomers(c *gin.Context) {
-	request := CustomerParam{}
-	err := c.BindQuery(&request)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
-		return
-	}
+	//request := CustomerParam{}
+	//err := c.BindQuery(&request)
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+	//	return
+	//}
 
 	name := c.Query("name")
 	email := c.Query("email")
@@ -117,12 +117,12 @@ func (h RequestHandlerCustomer) UpdateCustomerById(c *gin.Context) {
 }
 
 func (h RequestHandlerCustomer) DeleteCustomerById(c *gin.Context) {
-	request := CustomerParam{}
-	err := c.BindQuery(&request)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
-		return
-	}
+	//request := CustomerParam{}
+	//err := c.BindQuery(&request)
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+	//	return
+	//}
 
 	customerId, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
