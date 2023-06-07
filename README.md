@@ -1,6 +1,6 @@
 # mini-project-2
 
-api contract dapat dilihat [disini](https://documenter.getpostman.com/view/11280646/2s93sZ8EaD)
+find the api documentation at the following postmant [link](https://documenter.getpostman.com/view/11280646/2s93sZ8EaD)
 
 # setup
 
