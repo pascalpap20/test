@@ -104,12 +104,12 @@ func (h RequestHandlerAdmin) UpdateAdminById(c *gin.Context) {
 }
 
 func (h RequestHandlerAdmin) DeleteAdminById(c *gin.Context) {
-	request := AdminParam{}
-	err := c.BindQuery(&request)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
-		return
-	}
+	//request := AdminParam{}
+	//err := c.BindQuery(&request)
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+	//	return
+	//}
 
 	adminId, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {

@@ -106,6 +106,9 @@ func (uc useCaseAdmin) Login(admin LoginParam) (*entity.Actor, error) {
 
 func (uc useCaseAdmin) Register(admin RegisterParam) (*entity.Actor, error) {
 	var newAdmin *entity.Actor
+	var salt string
+
+	admin.Password, salt = auth.GenerateHash(admin.Password)
 
 	newAdmin = &entity.Actor{
 		RoleID:     2,
@@ -113,6 +116,7 @@ func (uc useCaseAdmin) Register(admin RegisterParam) (*entity.Actor, error) {
 		Password:   admin.Password,
 		IsVerified: "false",
 		IsActive:   "false",
+		Salt:       salt,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 	}
