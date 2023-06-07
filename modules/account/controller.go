@@ -13,6 +13,10 @@ type ControllerAdmin interface {
 	DeleteAdminById(id uint) (FindAdmin, error)
 	Login(req LoginParam) (any, error)
 	Register(req RegisterParam) (any, error)
+	GetRegisterApproval() (FindAllRegisterApproval, error)
+	UpdateRegisterApprovalStatusById(req UpdateRegisterApproval, id uint, adminInfo map[string]uint) (any, error)
+	SetActivateAdminById(id uint) (any, error)
+	SetDeactivateAdminById(id uint) (any, error)
 }
 
 type controllerAdmin struct {
@@ -28,14 +32,14 @@ func (uc controllerAdmin) CreateAdmin(req AdminParam) (any, error) {
 	res := SuccessCreate{
 		ResponseMeta: dto.ResponseMeta{
 			Success:      true,
-			MessageTitle: "Success create user",
-			Message:      "Success Register",
+			MessageTitle: "Success create admin",
+			Message:      "Success create",
 			ResponseTime: "",
 		},
 		Data: AdminParam{
-			Username:   admin.Username,
-			RoleID:     admin.RoleID,
-			Password:   admin.Password,
+			Username: admin.Username,
+			RoleID:   admin.RoleID,
+			//Password:   admin.Password,
 			IsVerified: admin.IsVerified,
 			IsActive:   admin.IsActive,
 		},
@@ -52,8 +56,8 @@ func (uc controllerAdmin) GetAdminById(id uint) (FindAdmin, error) {
 	res.Data = admin
 	res.ResponseMeta = dto.ResponseMeta{
 		Success:      true,
-		MessageTitle: "Success get user",
-		Message:      "Success",
+		MessageTitle: "Success get admin",
+		Message:      "Success retrieve an admin data",
 		ResponseTime: "",
 	}
 	return res, nil
@@ -69,8 +73,8 @@ func (uc controllerAdmin) GetAdmins(username string, page uint) (FindAllAdmins, 
 	res.Data = admin
 	res.ResponseMeta = dto.ResponseMeta{
 		Success:      true,
-		MessageTitle: "Success get user",
-		Message:      "Success",
+		MessageTitle: "Success get all admins",
+		Message:      "Success retrieve all admins",
 		ResponseTime: "",
 	}
 
@@ -86,8 +90,8 @@ func (uc controllerAdmin) UpdateAdminById(req UpdateAdmin, id uint) (any, error)
 	res := SuccessCreate{
 		ResponseMeta: dto.ResponseMeta{
 			Success:      true,
-			MessageTitle: "Success create user",
-			Message:      "Success Register",
+			MessageTitle: "Success update admin",
+			Message:      "Success update",
 			ResponseTime: "",
 		},
 		Data: AdminParam{
@@ -154,14 +158,100 @@ func (uc controllerAdmin) Register(req RegisterParam) (any, error) {
 	res := SuccessCreate{
 		ResponseMeta: dto.ResponseMeta{
 			Success:      true,
-			MessageTitle: "Success Login",
-			Message:      "Success Login",
+			MessageTitle: "Success register new admin",
+			Message:      "Success register",
 			ResponseTime: "",
 		},
 		Data: AdminParam{
 			Username:   admin.Username,
 			RoleID:     admin.RoleID,
 			Password:   admin.Password,
+			IsVerified: admin.IsVerified,
+			IsActive:   admin.IsActive,
+		},
+	}
+	return res, nil
+}
+
+func (uc controllerAdmin) GetRegisterApproval() (FindAllRegisterApproval, error) {
+	var res FindAllRegisterApproval
+	registerApproval, err := uc.adminUseCase.GetRegisterApproval()
+	if err != nil {
+		return FindAllRegisterApproval{}, err
+	}
+
+	res.Data = registerApproval
+	res.ResponseMeta = dto.ResponseMeta{
+		Success:      true,
+		MessageTitle: "Success get register approval",
+		Message:      "Success",
+		ResponseTime: "",
+	}
+
+	return res, nil
+}
+
+func (uc controllerAdmin) UpdateRegisterApprovalStatusById(req UpdateRegisterApproval, id uint, adminInfo map[string]uint) (any, error) {
+
+	registerApproval, err := uc.adminUseCase.UpdateRegisterApprovalStatusById(req, id, adminInfo)
+	if err != nil {
+		return SuccessCreate{}, err
+	}
+	res := SuccessUpdateRegisterApproval{
+		ResponseMeta: dto.ResponseMeta{
+			Success:      true,
+			MessageTitle: "Success update status",
+			Message:      "Success",
+			ResponseTime: "",
+		},
+		Data: RegisterApprovalParam{
+			AdminID:      registerApproval.ID,
+			SuperAdminID: registerApproval.SuperAdminID,
+			Status:       registerApproval.Status,
+		},
+	}
+	return res, nil
+}
+
+func (uc controllerAdmin) SetActivateAdminById(id uint) (any, error) {
+
+	admin, err := uc.adminUseCase.SetActivateAdminById(id)
+	if err != nil {
+		return SuccessCreate{}, err
+	}
+	res := SuccessCreate{
+		ResponseMeta: dto.ResponseMeta{
+			Success:      true,
+			MessageTitle: "Success activate an admin",
+			Message:      "Success activate",
+			ResponseTime: "",
+		},
+		Data: AdminParam{
+			Username:   admin.Username,
+			RoleID:     admin.RoleID,
+			IsVerified: admin.IsVerified,
+			IsActive:   admin.IsActive,
+		},
+	}
+	return res, nil
+}
+
+func (uc controllerAdmin) SetDeactivateAdminById(id uint) (any, error) {
+
+	admin, err := uc.adminUseCase.SetDeactivateAdminById(id)
+	if err != nil {
+		return SuccessCreate{}, err
+	}
+	res := SuccessCreate{
+		ResponseMeta: dto.ResponseMeta{
+			Success:      true,
+			MessageTitle: "Success deactivate an admin",
+			Message:      "Success deactivate",
+			ResponseTime: "",
+		},
+		Data: AdminParam{
+			Username:   admin.Username,
+			RoleID:     admin.RoleID,
 			IsVerified: admin.IsVerified,
 			IsActive:   admin.IsActive,
 		},

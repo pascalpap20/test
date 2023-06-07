@@ -15,6 +15,10 @@ type UseCaseAdmin interface {
 	DeleteAdminById(id uint) (entity.Actor, error)
 	Login(admin LoginParam) (*entity.Actor, error)
 	Register(admin RegisterParam) (*entity.Actor, error)
+	GetRegisterApproval() ([]entity.RegisterApproval, error)
+	UpdateRegisterApprovalStatusById(reg UpdateRegisterApproval, id uint, adminInfo map[string]uint) (entity.RegisterApproval, error)
+	SetActivateAdminById(id uint) (entity.Actor, error)
+	SetDeactivateAdminById(id uint) (entity.Actor, error)
 }
 
 type useCaseAdmin struct {
@@ -119,4 +123,41 @@ func (uc useCaseAdmin) Register(admin RegisterParam) (*entity.Actor, error) {
 	}
 
 	return res, nil
+}
+
+func (uc useCaseAdmin) GetRegisterApproval() ([]entity.RegisterApproval, error) {
+	var registerApproval []entity.RegisterApproval
+	registerApproval, err := uc.adminRepo.GetRegisterApproval()
+	return registerApproval, err
+}
+
+func (uc useCaseAdmin) UpdateRegisterApprovalStatusById(reg UpdateRegisterApproval, id uint, adminInfo map[string]uint) (entity.RegisterApproval, error) {
+	var updateRegisterApproval *entity.RegisterApproval
+
+	updateRegisterApproval = &entity.RegisterApproval{
+		SuperAdminID: adminInfo["id"],
+		Status:       reg.Status,
+	}
+
+	_, err := uc.adminRepo.UpdateRegisterApprovalStatusById(updateRegisterApproval, id)
+	if err != nil {
+		return *updateRegisterApproval, err
+	}
+	return *updateRegisterApproval, nil
+}
+
+func (uc useCaseAdmin) SetActivateAdminById(id uint) (entity.Actor, error) {
+	admin, err := uc.adminRepo.SetActivateAdminById(id)
+	if err != nil {
+		return admin, err
+	}
+	return admin, nil
+}
+
+func (uc useCaseAdmin) SetDeactivateAdminById(id uint) (entity.Actor, error) {
+	admin, err := uc.adminRepo.SetDeactivateAdminById(id)
+	if err != nil {
+		return admin, err
+	}
+	return admin, nil
 }

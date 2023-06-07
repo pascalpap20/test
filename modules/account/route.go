@@ -22,23 +22,23 @@ func (r RouterAdmin) Handle(router *gin.Engine) {
 	basepath := "/admin"
 	admin := router.Group(basepath)
 
-	admin.POST("/",
+	admin.POST("/", middleware.IsSuperAdmin(),
 		r.AdminRequestHandler.CreateAdmin,
 	)
 
-	admin.GET("/:id",
+	admin.GET("/:id", middleware.IsSuperAdminOrAdmin(),
 		r.AdminRequestHandler.GetAdminById,
 	)
 
-	admin.GET("/", middleware.IsAdmin(),
+	admin.GET("/", middleware.IsSuperAdminOrAdmin(),
 		r.AdminRequestHandler.GetAdmins,
 	)
 
-	admin.PUT("/:id",
+	admin.PUT("/:id", middleware.IsSuperAdminOrAdmin(),
 		r.AdminRequestHandler.UpdateAdminById,
 	)
 
-	admin.DELETE("/:id",
+	admin.DELETE("/:id", middleware.IsSuperAdmin(),
 		r.AdminRequestHandler.DeleteAdminById,
 	)
 
@@ -46,7 +46,24 @@ func (r RouterAdmin) Handle(router *gin.Engine) {
 		r.AdminRequestHandler.Login,
 	)
 
-	admin.POST("/register",
+	admin.POST("/register", middleware.IsSuperAdminOrAdmin(),
 		r.AdminRequestHandler.Register,
 	)
+
+	admin.GET("/register-approval", middleware.IsSuperAdmin(),
+		r.AdminRequestHandler.GetRegisterApproval,
+	)
+
+	admin.PUT("/register-approval/:id", middleware.IsSuperAdmin(),
+		r.AdminRequestHandler.UpdateRegisterApprovalStatusById,
+	)
+
+	admin.PUT("/set-activate/:id", middleware.IsSuperAdmin(),
+		r.AdminRequestHandler.SetActivateAdminById,
+	)
+
+	admin.PUT("/set-deactivate/:id", middleware.IsSuperAdmin(),
+		r.AdminRequestHandler.SetDeactivateAdminById,
+	)
+
 }

@@ -5,6 +5,7 @@ import (
 	"crud/utils/auth"
 	"errors"
 	"gorm.io/gorm"
+	"time"
 )
 
 type Actor struct {
@@ -26,6 +27,10 @@ type ActorInterfaceRepo interface {
 	DeleteActorById(id uint) (entity.Actor, error)
 	Login(actor *entity.Actor) (*entity.Actor, error)
 	Register(actor *entity.Actor) (*entity.Actor, error)
+	GetRegisterApproval() ([]entity.RegisterApproval, error)
+	UpdateRegisterApprovalStatusById(reg *entity.RegisterApproval, id uint) (*entity.RegisterApproval, error)
+	SetActivateAdminById(id uint) (entity.Actor, error)
+	SetDeactivateAdminById(id uint) (entity.Actor, error)
 }
 
 func (repo Actor) CreateActor(actor *entity.Actor) (*entity.Actor, error) {
@@ -131,4 +136,79 @@ func (repo Actor) Register(actor *entity.Actor) (*entity.Actor, error) {
 	tx.Commit()
 
 	return admin, err
+}
+
+func (repo Actor) GetRegisterApproval() ([]entity.RegisterApproval, error) {
+	var registerApproval []entity.RegisterApproval
+	repo.db.Find(&registerApproval)
+	return registerApproval, nil
+}
+
+func (repo Actor) UpdateRegisterApprovalStatusById(reg *entity.RegisterApproval, id uint) (*entity.RegisterApproval, error) {
+	var err error
+	var registerApproval entity.RegisterApproval
+
+	tx := repo.db.Begin()
+
+	res := tx.Model(&reg).Where("id = ?", id).Updates(reg)
+	if res.RowsAffected == 0 {
+		err = errors.New("id not found or no changes made")
+	}
+
+	tx.First(&registerApproval, "id = ?", id)
+
+	switch reg.Status {
+	case "approved":
+		err := tx.Model(&entity.Actor{}).Where("id = ?", registerApproval.AdminID).Updates(entity.Actor{
+			IsVerified: "true",
+			IsActive:   "true",
+			UpdatedAt:  time.Now(),
+		}).Error
+		if err != nil {
+			tx.Rollback()
+			return reg, err
+		}
+	case "rejected":
+		err := tx.Model(&entity.Actor{}).Where("id = ?", registerApproval.AdminID).Updates(entity.Actor{
+			IsVerified: "false",
+			IsActive:   "false",
+			UpdatedAt:  time.Now(),
+		}).Error
+		if err != nil {
+			tx.Rollback()
+			return reg, err
+		}
+	}
+
+	tx.Commit()
+
+	return reg, err
+}
+
+func (repo Actor) SetActivateAdminById(id uint) (entity.Actor, error) {
+	var err error
+	var actor entity.Actor
+	res := repo.db.Model(&actor).Where("id = ?", id).Updates(&entity.Actor{
+		IsActive:  "true",
+		UpdatedAt: time.Now(),
+	})
+	if res.RowsAffected == 0 {
+		err = errors.New("id not found")
+	}
+
+	return actor, err
+}
+
+func (repo Actor) SetDeactivateAdminById(id uint) (entity.Actor, error) {
+	var err error
+	var actor entity.Actor
+	res := repo.db.Model(&actor).Where("id = ?", id).Updates(&entity.Actor{
+		IsActive:  "false",
+		UpdatedAt: time.Now(),
+	})
+	if res.RowsAffected == 0 {
+		err = errors.New("id not found")
+	}
+
+	return actor, err
 }

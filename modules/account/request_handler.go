@@ -3,6 +3,7 @@ package account
 import (
 	"crud/dto"
 	"crud/repository"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -26,9 +27,9 @@ func NewAdminRequestHandler(
 
 func (h RequestHandlerAdmin) CreateAdmin(c *gin.Context) {
 	request := AdminParam{}
-	err := c.Bind(&request)
+	err := c.ShouldBindJSON(&request)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+		c.JSON(http.StatusBadRequest, dto.DefaultErrorResponseWithMessage(err.Error()))
 		return
 	}
 	res, err := h.ctr.CreateAdmin(request)
@@ -40,12 +41,12 @@ func (h RequestHandlerAdmin) CreateAdmin(c *gin.Context) {
 }
 
 func (h RequestHandlerAdmin) GetAdminById(c *gin.Context) {
-	request := AdminParam{}
-	err := c.BindQuery(&request)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
-		return
-	}
+	//request := AdminParam{}
+	//err := c.BindQuery(&request)
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+	//	return
+	//}
 
 	adminId, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
@@ -62,12 +63,12 @@ func (h RequestHandlerAdmin) GetAdminById(c *gin.Context) {
 }
 
 func (h RequestHandlerAdmin) GetAdmins(c *gin.Context) {
-	request := AdminParam{}
-	err := c.BindQuery(&request)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
-		return
-	}
+	//request := AdminParam{}
+	//err := c.BindQuery(&request)
+	//if err != nil {
+	//	c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+	//	return
+	//}
 
 	username := c.Query("username")
 	//page := c.Query("page")
@@ -82,9 +83,9 @@ func (h RequestHandlerAdmin) GetAdmins(c *gin.Context) {
 
 func (h RequestHandlerAdmin) UpdateAdminById(c *gin.Context) {
 	request := UpdateAdmin{}
-	err := c.Bind(&request)
+	err := c.ShouldBindJSON(&request)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+		c.JSON(http.StatusBadRequest, dto.DefaultErrorResponseWithMessage(err.Error()))
 		return
 	}
 
@@ -126,9 +127,9 @@ func (h RequestHandlerAdmin) DeleteAdminById(c *gin.Context) {
 
 func (h RequestHandlerAdmin) Login(c *gin.Context) {
 	request := LoginParam{}
-	err := c.Bind(&request)
+	err := c.ShouldBindJSON(&request)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+		c.JSON(http.StatusBadRequest, dto.DefaultErrorResponseWithMessage(err.Error()))
 		return
 	}
 	res, err := h.ctr.Login(request)
@@ -141,12 +142,88 @@ func (h RequestHandlerAdmin) Login(c *gin.Context) {
 
 func (h RequestHandlerAdmin) Register(c *gin.Context) {
 	request := RegisterParam{}
-	err := c.Bind(&request)
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.DefaultErrorResponseWithMessage(err.Error()))
+		return
+	}
+	res, err := h.ctr.Register(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.DefaultErrorResponse(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+func (h RequestHandlerAdmin) GetRegisterApproval(c *gin.Context) {
+	request := RegisterApprovalParam{}
+	err := c.BindQuery(&request)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
 		return
 	}
-	res, err := h.ctr.Register(request)
+
+	res, err := h.ctr.GetRegisterApproval()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.DefaultErrorResponse(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+func (h RequestHandlerAdmin) UpdateRegisterApprovalStatusById(c *gin.Context) {
+	request := UpdateRegisterApproval{}
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.DefaultErrorResponseWithMessage(err.Error()))
+		return
+	}
+
+	registerApprovalId, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+		return
+	}
+
+	adminId := c.GetFloat64("id")
+	roleId := c.GetFloat64("role_id")
+	fmt.Println(fmt.Sprintf("%T %T", uint(adminId), roleId))
+	adminInfo := map[string]uint{
+		"id":      uint(adminId),
+		"role_id": uint(roleId),
+	}
+
+	res, err := h.ctr.UpdateRegisterApprovalStatusById(request, uint(registerApprovalId), adminInfo)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.DefaultErrorResponse(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+func (h RequestHandlerAdmin) SetActivateAdminById(c *gin.Context) {
+	adminId, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+		return
+	}
+
+	res, err := h.ctr.SetActivateAdminById(uint(adminId))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.DefaultErrorResponse(err.Error()))
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+func (h RequestHandlerAdmin) SetDeactivateAdminById(c *gin.Context) {
+	adminId, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.DefaultBadRequestResponse())
+		return
+	}
+
+	res, err := h.ctr.SetDeactivateAdminById(uint(adminId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.DefaultErrorResponse(err.Error()))
 		return
