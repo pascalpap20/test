@@ -6,8 +6,8 @@ type ErrorResponse struct {
 	Errors any `json:"errors,omitempty"`
 }
 
-func DefaultErrorResponse() ErrorResponse {
-	return DefaultErrorResponseWithMessage("")
+func DefaultErrorResponse(errMessage string) ErrorResponse {
+	return DefaultErrorResponseWithMessage(errMessage)
 }
 
 func DefaultErrorResponseWithMessage(msg string) ErrorResponse {
@@ -46,4 +46,16 @@ func DefaultDataInvalidResponse(validationErrors any) ErrorResponse {
 
 func DefaultBadRequestResponse() ErrorResponse {
 	return DefaultErrorResponseWithMessage("Bad request")
+}
+
+func DefaultUnauthorizedResponse() ErrorResponse {
+	return ErrorResponse{
+		ResponseMeta: ResponseMeta{
+			Success:      false,
+			MessageTitle: "unauthorized",
+			Message:      "this user is unauthorized",
+			ResponseTime: "",
+		},
+		Data: nil,
+	}
 }

@@ -33,7 +33,7 @@ func (h RequestHandlerUser) CreateUser(c *gin.Context) {
 	}
 	res, err := h.ctr.CreateUser(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.DefaultErrorResponse())
+		c.JSON(http.StatusInternalServerError, dto.DefaultErrorResponse(err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -54,7 +54,7 @@ func (h RequestHandlerUser) GetUserById(c *gin.Context) {
 
 	res, err := h.ctr.GetUserById(uint(userId))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.DefaultErrorResponse())
+		c.JSON(http.StatusInternalServerError, dto.DefaultErrorResponse(err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, res)
