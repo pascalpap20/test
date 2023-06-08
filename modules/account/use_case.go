@@ -21,6 +21,13 @@ type UseCaseAdmin interface {
 	SetDeactivateAdminById(id uint) (entity.Actor, error)
 }
 
+// NewUseCaseAdmin : used for unit-testing purpose
+func NewUseCaseAdmin(adminRepo repository.ActorInterfaceRepo) UseCaseAdmin {
+	return &useCaseAdmin{
+		adminRepo: adminRepo,
+	}
+}
+
 type useCaseAdmin struct {
 	adminRepo repository.ActorInterfaceRepo
 }

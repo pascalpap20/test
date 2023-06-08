@@ -14,6 +14,13 @@ type UseCaseCustomer interface {
 	DeleteCustomerById(id uint) (entity.Customer, error)
 }
 
+// NewUseCaseCustomer : used for testing purpose
+func NewUseCaseCustomer(customerRepo repository.CustomerInterfaceRepo) UseCaseCustomer {
+	return &useCaseCustomer{
+		customerRepo: customerRepo,
+	}
+}
+
 type useCaseCustomer struct {
 	customerRepo repository.CustomerInterfaceRepo
 }
