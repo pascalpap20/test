@@ -80,20 +80,20 @@ func TestGetCustomerById(t *testing.T) {
 	mockRepo.On("GetCustomerById", customerID).Return(expectedCustomer, nil)
 
 	// Call the method under test
-	admin, err := useCase.GetCustomerById(customerID)
+	result, err := useCase.GetCustomerById(customerID)
 
 	// Assert the expectations were met
 	mockRepo.AssertExpectations(t)
 
 	// Assert the result using testify assertions
 	assert.NoError(t, err)
-	assert.Equal(t, expectedCustomer.ID, admin.ID)
-	assert.Equal(t, expectedCustomer.FirstName, admin.FirstName)
-	assert.Equal(t, expectedCustomer.LastName, admin.LastName)
-	assert.Equal(t, expectedCustomer.Email, admin.Email)
-	assert.Equal(t, expectedCustomer.Avatar, admin.Avatar)
-	assert.WithinDuration(t, expectedCustomer.CreatedAt, admin.CreatedAt, time.Second)
-	assert.WithinDuration(t, expectedCustomer.UpdatedAt, admin.UpdatedAt, time.Second)
+	assert.Equal(t, expectedCustomer.ID, result.ID)
+	assert.Equal(t, expectedCustomer.FirstName, result.FirstName)
+	assert.Equal(t, expectedCustomer.LastName, result.LastName)
+	assert.Equal(t, expectedCustomer.Email, result.Email)
+	assert.Equal(t, expectedCustomer.Avatar, result.Avatar)
+	assert.WithinDuration(t, expectedCustomer.CreatedAt, result.CreatedAt, time.Second)
+	assert.WithinDuration(t, expectedCustomer.UpdatedAt, result.UpdatedAt, time.Second)
 }
 
 func TestGetCustomers(t *testing.T) {
@@ -134,22 +134,22 @@ func TestGetCustomers(t *testing.T) {
 	mockRepo.On("GetCustomers", name, email, page).Return(expectedCustomers, nil)
 
 	// Call the method under test
-	admins, err := useCase.GetCustomers(name, email, page)
+	customers, err := useCase.GetCustomers(name, email, page)
 
 	// Assert the expectations were met
 	mockRepo.AssertExpectations(t)
 
 	// Assert the result using testify assertions
 	assert.NoError(t, err)
-	assert.Equal(t, len(expectedCustomers), len(admins))
+	assert.Equal(t, len(expectedCustomers), len(customers))
 	for i := 0; i < len(expectedCustomers); i++ {
-		assert.Equal(t, expectedCustomers[i].ID, admins[i].ID)
-		assert.Equal(t, expectedCustomers[i].FirstName, admins[i].FirstName)
-		assert.Equal(t, expectedCustomers[i].LastName, admins[i].LastName)
-		assert.Equal(t, expectedCustomers[i].Email, admins[i].Email)
-		assert.Equal(t, expectedCustomers[i].Avatar, admins[i].Avatar)
-		assert.WithinDuration(t, expectedCustomers[i].CreatedAt, admins[i].CreatedAt, time.Second)
-		assert.WithinDuration(t, expectedCustomers[i].UpdatedAt, admins[i].UpdatedAt, time.Second)
+		assert.Equal(t, expectedCustomers[i].ID, customers[i].ID)
+		assert.Equal(t, expectedCustomers[i].FirstName, customers[i].FirstName)
+		assert.Equal(t, expectedCustomers[i].LastName, customers[i].LastName)
+		assert.Equal(t, expectedCustomers[i].Email, customers[i].Email)
+		assert.Equal(t, expectedCustomers[i].Avatar, customers[i].Avatar)
+		assert.WithinDuration(t, expectedCustomers[i].CreatedAt, customers[i].CreatedAt, time.Second)
+		assert.WithinDuration(t, expectedCustomers[i].UpdatedAt, customers[i].UpdatedAt, time.Second)
 	}
 }
 
