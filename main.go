@@ -3,7 +3,6 @@ package main
 import (
 	"crud/modules/account"
 	"crud/modules/customer"
-	"crud/modules/user"
 	"crud/utils/db"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -29,9 +28,6 @@ func main() {
 	//}
 
 	fmt.Println("database connected..!")
-
-	userHandler := user.NewRouter(dbCrud)
-	userHandler.Handle(router)
 
 	adminHandler := account.NewRouter(dbCrud)
 	adminHandler.Handle(router)
