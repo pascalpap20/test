@@ -43,3 +43,13 @@ the controller layer.
 # ERD
 
 ![erd](https://gitlab.com/pascalpanatagama/bootcampbri-miniproject1/-/raw/main/MiniProject1-Page-2.drawio.png)
+
+# Docker
+
+Create image and run docker-compose
+```
+docker build -t crm-service-image . 
+docker run -p 8081:8081 crm-service-image
+docker-compose up
+```
+
