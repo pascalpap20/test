@@ -24,7 +24,7 @@ jobs:
         run: go get github.com/stretchr/testify
 
       - name: Generate mock
-        run: mockery --dir=repository --output=mock --outpkg=mocks --all
+        run: go generate -v ./...
 
       - name: Build
         run: go build -o crud ./main.go
